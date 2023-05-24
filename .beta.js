@@ -60,8 +60,9 @@ app.post('/login', (req, res) => {
 });
 
 // Endpoint per la creazione di un nuovo utente
+// Endpoint per la creazione di un nuovo utente
 app.post('/users', (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, name, surname, dob } = req.body;
 
   db.query('SELECT * FROM users WHERE email = ?', [email], (err, result) => {
     if (err) {
@@ -71,12 +72,12 @@ app.post('/users', (req, res) => {
       logger(`[${new Date().toLocaleString('it-IT')}] '\x1b[33m[WARNING] Failed user creation attempt for existing email \x1b[1m${email}\x1b[0m'`);
       res.status(400).json({ message: 'Email already exists' });
     } else {
-      db.query('INSERT INTO users (email, password) VALUES (?, ?)', [email, password], (err, result) => {
+      db.query('INSERT INTO users (email, password, name, surname, dob) VALUES (?, ?, ?, ?, ?)', [email, password, name, surname, dob], (err, result) => {
         if (err) {
           logger(`[${new Date().toLocaleString('it-IT')}] '\x1b[31m[ERROR] Error while creating user with email \x1b[1m${email}:\x1b[0m'`, err);
           res.status(500).json({ message: 'Internal server error' });
         } else {
-          logger(`[${new Date().toLocaleString('it-IT')}] '\x1b[32m[SUCCESS] User with email \x1b[1m${email}\x1b[0m created\x1b[0m'`);
+          logger(`[${new Date().toLocaleString('it-IT')}] '\x1b[32m[SUCCESS] User with email \x1b[1m${email}\x1b[0m \x1b[32mcreated\x1b[0m'`);
           res.status(201).json({ message: 'User created' });
         }
       });
